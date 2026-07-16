@@ -300,16 +300,16 @@ function AttendeesPage() {
           <p className="eyebrow">Deltagarregister · 2026</p>
           <h1>GÄNGET</h1>
           <p>
-            Olika spetskompetenser. Samma omdöme. Presentationerna nedan är
-            platshållare tills den fullständiga laguppställningen är spikad.
+            Olika spetskompetenser. Samma omdöme. Fem män på väg mot skog,
+            fiske och beslut som sällan behöver dokumenteras.
           </p>
         </section>
         <section className="attendee-list">
           {attendees.map((person, index) => (
             <article className="attendee-row" key={`${person.nickname}-${index}`}>
-              <div className="attendee-portrait" aria-hidden="true">
-                <span>{person.initials}</span>
-                <Trees />
+              <div className="attendee-portrait">
+                <span aria-hidden="true">{person.initials}</span>
+                <img src={person.image} alt={`Porträtt av ${person.name}`} />
               </div>
               <span className="attendee-number">0{index + 1}</span>
               <div className="attendee-name">
@@ -328,9 +328,9 @@ function AttendeesPage() {
           <CalendarDays />
           <div>
             <p className="overline">Laguppställning 2026</p>
-            <h2>FLER NAMN KOMMER</h2>
+            <h2>FEM MAN STARKA</h2>
           </div>
-          <p>Skicka namn, smeknamn, bild och en högst tvivelaktig meritlista.</p>
+          <p>Roller, presentationer och övriga komprometterande detaljer fylls på senare.</p>
         </section>
       </main>
       <Footer />

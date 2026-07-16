@@ -4,6 +4,7 @@ export type Attendee = {
   role: string
   description: string
   initials: string
+  image: string
 }
 
 export const activities = [
@@ -54,36 +55,49 @@ export const menu = [
 
 export const attendees: Attendee[] = [
   {
-    name: 'Namn kommer',
-    nickname: 'Lägerchefen',
-    role: 'Eld & logistik',
+    name: 'Fredde',
+    nickname: 'Choble',
+    role: 'Profil på väg',
     description:
-      'Vet var tändstickorna ligger och varför ingen annan bör röra dem.',
-    initials: 'LC',
+      'Presentation och en högst tvivelaktig meritlista kommer snart.',
+    initials: 'FC',
+    image: './images/attendees/fredde-choble.png',
   },
   {
-    name: 'Namn kommer',
-    nickname: 'Kaptenen',
-    role: 'Fiske & sjökort',
+    name: 'Payye',
+    nickname: 'Malung 2026',
+    role: 'Profil på väg',
     description:
-      'Har aldrig återvänt utan en historia. Fisk är mer varierande.',
-    initials: 'KA',
+      'Presentation och en högst tvivelaktig meritlista kommer snart.',
+    initials: 'PA',
+    image: './images/attendees/payye.png',
   },
   {
-    name: 'Namn kommer',
-    nickname: 'Köksmästaren',
-    role: 'Mat & proviant',
+    name: 'Fille',
+    nickname: 'Malung 2026',
+    role: 'Profil på väg',
     description:
-      'Lagar middag på gjutjärn och rena känslor. Recept är vägledning.',
-    initials: 'KM',
+      'Presentation och en högst tvivelaktig meritlista kommer snart.',
+    initials: 'FI',
+    image: './images/attendees/fille.png',
   },
   {
-    name: 'Namn kommer',
-    nickname: 'Materialaren',
-    role: 'Utrustning & överlevnad',
+    name: 'Hagge',
+    nickname: 'Malung 2026',
+    role: 'Profil på väg',
     description:
-      'Tar med tre av allt och lånar ändå din kniv.',
-    initials: 'MA',
+      'Presentation och en högst tvivelaktig meritlista kommer snart.',
+    initials: 'HA',
+    image: './images/attendees/hagge.png',
+  },
+  {
+    name: 'Yavve',
+    nickname: 'Malung 2026',
+    role: 'Profil på väg',
+    description:
+      'Presentation och en högst tvivelaktig meritlista kommer snart.',
+    initials: 'YA',
+    image: './images/attendees/yavve.png',
   },
 ]
 

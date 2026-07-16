@@ -778,24 +778,35 @@ footer p {
   height: 140px;
   place-items: center;
   overflow: hidden;
-  color: var(--cream);
-  background: var(--forest-soft);
+  border: 1px solid var(--forest);
+  color: rgba(23, 36, 28, 0.34);
+  background:
+    radial-gradient(circle at 70% 28%, rgba(241, 234, 219, 0.22), transparent 28%),
+    var(--orange);
 }
 
 .attendee-portrait span {
-  z-index: 2;
+  position: absolute;
+  right: 0.5rem;
+  bottom: -0.25rem;
+  z-index: 1;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 3.4rem;
+  font-size: 3rem;
+  line-height: 1;
 }
 
-.attendee-portrait svg {
-  position: absolute;
-  right: -2rem;
-  bottom: -2rem;
-  width: 110px;
-  height: 110px;
-  color: var(--orange);
-  opacity: 0.24;
+.attendee-portrait img {
+  z-index: 2;
+  width: 94%;
+  height: 96%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 8px 8px rgba(23, 36, 28, 0.25));
+  transition: transform 180ms ease;
+}
+
+.attendee-row:hover .attendee-portrait img {
+  transform: scale(1.04) rotate(-1deg);
 }
 
 .attendee-number,
@@ -1072,7 +1083,7 @@ footer p {
   }
 
   .attendee-portrait span {
-    font-size: 2.4rem;
+    font-size: 1.8rem;
   }
 
   .attendee-number {
