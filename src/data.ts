@@ -12,23 +12,19 @@ export const activities = [
     time: 'Torsdag',
     title: 'Bastu & bärs',
     text: 'Mjukstart.',
+    items: ['800 grader'],
   },
   {
     time: 'Fredag',
     title: 'Bärs & Storön',
     text: 'Bastu på kvällen.',
+    items: ['Roronoa Zoro', 'Plankton'],
   },
   {
     time: 'Lördag',
     title: 'Aktiviteter, bärs & bastu',
-    text: 'Dagens fem grenar:',
-    items: [
-      'Rodd runt Storön',
-      'Bastukämpen',
-      'Urinkampen',
-      'Par 3',
-      'Quiz',
-    ],
+    text: 'Dagens tre grenar:',
+    items: ['Par 3', 'Flygande Jakob', 'Quiz'],
   },
   {
     time: 'Söndag',

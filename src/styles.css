@@ -581,9 +581,49 @@ h2 {
   line-height: 1.65;
 }
 
-.schedule-list {
-  margin-top: 5rem;
+.competition-brief {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.5fr);
+  gap: 3rem;
+  align-items: start;
+  margin-top: 4rem;
+  padding: 1.5rem 0;
   border-top: 1px solid rgba(241, 234, 219, 0.2);
+  border-bottom: 1px solid rgba(241, 234, 219, 0.2);
+}
+
+.competition-brief-title {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  color: var(--orange);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.competition-brief-title svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.8;
+}
+
+.competition-brief p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--cream);
+  font-size: 1.08rem;
+  line-height: 1.6;
+}
+
+.competition-brief strong {
+  color: var(--orange);
+  letter-spacing: 0.04em;
+}
+
+.schedule-list {
+  margin-top: 3.5rem;
 }
 
 .schedule-row {
@@ -631,27 +671,151 @@ h2 {
 }
 
 .activity-items li {
-  position: relative;
-  padding-left: 0.9rem;
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
   color: var(--cream);
   font-size: 0.76rem;
   font-weight: 600;
   letter-spacing: 0.04em;
 }
 
-.activity-items li::before {
-  position: absolute;
-  top: 0.5em;
-  left: 0;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--orange);
-  content: '';
+.activity-items li svg {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  color: var(--orange);
+  stroke-width: 2;
 }
 
 .schedule-row > svg {
   color: var(--orange);
+}
+
+.scoreboard {
+  margin-top: 6rem;
+  border-top: 1px solid rgba(241, 234, 219, 0.2);
+}
+
+.scoreboard-heading {
+  display: flex;
+  gap: 2rem;
+  align-items: end;
+  justify-content: space-between;
+  padding: 2rem 0 1.5rem;
+}
+
+.scoreboard-heading h3 {
+  margin: 0.15rem 0 0;
+  font-size: clamp(2.6rem, 5vw, 4.8rem);
+}
+
+.scoreboard-heading > span {
+  padding-bottom: 0.5rem;
+  color: #9eaa9f;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.scoreboard-table {
+  border-top: 1px solid rgba(241, 234, 219, 0.2);
+}
+
+.scoreboard-header,
+.scoreboard-row {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  gap: 2rem;
+  align-items: center;
+}
+
+.scoreboard-header {
+  min-height: 44px;
+  color: #7e897f;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.scoreboard-header span:last-child {
+  text-align: right;
+}
+
+.scoreboard-row {
+  min-height: 78px;
+  border-top: 1px solid rgba(241, 234, 219, 0.12);
+}
+
+.scoreboard-person {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 1.1rem;
+  align-items: center;
+}
+
+.scoreboard-person > span {
+  color: var(--cream);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.scoreboard-avatar {
+  --scoreboard-avatar-scale: 1;
+  --scoreboard-avatar-x: 0;
+  --scoreboard-avatar-y: 0;
+
+  display: grid;
+  width: 44px;
+  height: 50px;
+  place-items: center;
+  justify-self: center;
+  overflow: hidden;
+}
+
+.scoreboard-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform:
+    translate(var(--scoreboard-avatar-x), var(--scoreboard-avatar-y))
+    scale(var(--scoreboard-avatar-scale));
+}
+
+.scoreboard-avatar[data-person='fredde'] {
+  --scoreboard-avatar-scale: 0.88;
+  --scoreboard-avatar-y: -7px;
+}
+
+.scoreboard-avatar[data-person='payye'] {
+  --scoreboard-avatar-scale: 0.92;
+  --scoreboard-avatar-y: -5px;
+}
+
+.scoreboard-avatar[data-person='fille'] {
+  --scoreboard-avatar-scale: 0.82;
+}
+
+.scoreboard-avatar[data-person='hagge'] {
+  --scoreboard-avatar-scale: 0.88;
+  --scoreboard-avatar-x: -1px;
+}
+
+.scoreboard-avatar[data-person='yavve'] {
+  --scoreboard-avatar-scale: 0.88;
+  --scoreboard-avatar-y: -7px;
+}
+
+.scoreboard-row > strong {
+  color: var(--orange);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 400;
+  text-align: right;
 }
 
 .menu-section {
@@ -1340,6 +1504,11 @@ footer p {
     max-width: 600px;
   }
 
+  .competition-brief {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
   .crew-teaser {
     grid-template-columns: 1fr;
   }
@@ -1461,6 +1630,49 @@ footer p {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.35rem;
+  }
+
+  .competition-brief {
+    margin-top: 3rem;
+    padding: 1.25rem 0;
+  }
+
+  .competition-brief p {
+    font-size: 1rem;
+  }
+
+  .scoreboard {
+    margin-top: 4.5rem;
+  }
+
+  .scoreboard-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .scoreboard-heading > span {
+    padding-bottom: 0;
+  }
+
+  .scoreboard-header,
+  .scoreboard-row {
+    grid-template-columns: 1fr 60px;
+    gap: 1rem;
+  }
+
+  .scoreboard-avatar {
+    width: 40px;
+    height: 46px;
+  }
+
+  .scoreboard-person {
+    grid-template-columns: 48px 1fr;
+    gap: 0.8rem;
+  }
+
+  .scoreboard-person > span {
+    font-size: 1.4rem;
   }
 
   .schedule-day {

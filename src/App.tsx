@@ -18,6 +18,7 @@ import {
   Menu as MenuIcon,
   Mountain,
   Play,
+  Trophy,
   Trees,
   Volume2,
   VolumeX,
@@ -379,6 +380,17 @@ function HomePage() {
               lös för att något oväntat ska kunna hända.
             </p>
           </div>
+          <div className="competition-brief">
+            <div className="competition-brief-title">
+              <Trophy aria-hidden="true" />
+              <span>Malung Open 2026</span>
+            </div>
+            <p>
+              Vi har 6 tävlingsgrenar i Malung. Obligatorisk närvaro på alla.
+              Vinnaren hedras med den gyllene dullen – man vill{' '}
+              <strong>VERKLIGEN</strong> vinna Malung Open 2026.
+            </p>
+          </div>
           <div className="schedule-list">
             {activities.map((activity, index) => (
               <motion.article
@@ -402,7 +414,10 @@ function HomePage() {
                   {'items' in activity && activity.items && (
                     <ul className="activity-items">
                       {activity.items.map((item) => (
-                        <li key={item}>{item}</li>
+                        <li key={item}>
+                          <Trophy aria-hidden="true" />
+                          <span>{item}</span>
+                        </li>
                       ))}
                     </ul>
                   )}
@@ -411,6 +426,53 @@ function HomePage() {
               </motion.article>
             ))}
           </div>
+          <motion.div
+            className="scoreboard"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={revealViewport}
+            transition={{ duration: 0.65, ease: smoothEase }}
+          >
+            <div className="scoreboard-heading">
+              <div>
+                <p className="overline">Malung Open 2026</p>
+                <h3>Ställningen</h3>
+              </div>
+              <span>Alla börjar på noll</span>
+            </div>
+            <div className="scoreboard-table" role="table" aria-label="Ställning i Malung Open 2026">
+              <div className="scoreboard-header" role="row">
+                <span role="columnheader">Deltagare</span>
+                <span role="columnheader">Poäng</span>
+              </div>
+              {attendees.map((person, index) => (
+                <motion.div
+                  className="scoreboard-row"
+                  role="row"
+                  key={person.name}
+                  initial={{ opacity: 0, x: -12 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{
+                    delay: index * 0.05,
+                    duration: 0.45,
+                    ease: smoothEase,
+                  }}
+                >
+                  <div className="scoreboard-person" role="cell">
+                    <div
+                      className="scoreboard-avatar"
+                      data-person={person.name.toLowerCase()}
+                    >
+                      <img src={person.image} alt="" />
+                    </div>
+                    <span>{person.name}</span>
+                  </div>
+                  <strong role="cell">0</strong>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </motion.section>
 
         <motion.section
