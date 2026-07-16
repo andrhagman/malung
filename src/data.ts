@@ -10,18 +10,25 @@ export type Attendee = {
 export const activities = [
   {
     time: 'Torsdag',
-    title: 'Inryckning & basläger',
-    text: 'Ankomst, eldstart och den traditionsenliga första kalla.',
+    title: 'Bastu & bärs',
+    text: 'Mjukstart.',
   },
   {
     time: 'Fredag',
-    title: 'Fiskeexpedition',
-    text: 'Tidig start, kaffe i termos och en helt rimlig mängd optimism.',
+    title: 'Bärs & Storön',
+    text: 'Bastu på kvällen.',
   },
   {
     time: 'Lördag',
-    title: 'Vildmarkskamp',
-    text: 'Grenar avslöjas på plats. Värdighet är inte en förutsättning.',
+    title: 'Aktiviteter, bärs & bastu',
+    text: 'Dagens fem grenar:',
+    items: [
+      'Rodd runt Storön',
+      'Bastukämpen',
+      'Urinkampen',
+      'Par 3',
+      'Quiz',
+    ],
   },
   {
     time: 'Söndag',
@@ -33,23 +40,23 @@ export const activities = [
 export const menu = [
   {
     day: 'Torsdag',
-    meal: 'Eldstart',
-    food: 'Kolbulle, lingon och något kallt ur ån',
+    meal: 'TBA',
+    food: '',
   },
   {
     day: 'Fredag',
-    meal: 'Efter fisket',
-    food: 'Fångsten — eller reservplanen från charken',
+    meal: 'TBA',
+    food: '',
   },
   {
     day: 'Lördag',
-    meal: 'Långmiddag',
-    food: 'Helgrillat, potatis och sås under fritt ansvar',
+    meal: 'TBA',
+    food: '',
   },
   {
     day: 'Söndag',
-    meal: 'Återställning',
-    food: 'Kaffe, ägg och det som fortfarande går att steka',
+    meal: 'TBA',
+    food: '',
   },
 ]
 
@@ -57,11 +64,11 @@ export const attendees: Attendee[] = [
   {
     name: 'Fredde',
     nickname: 'Choble',
-    role: 'Profil på väg',
+    role: 'Aktivitetsansvarig',
     description:
       'Presentation och en högst tvivelaktig meritlista kommer snart.',
     initials: 'FC',
-    image: './images/attendees/fredde-choble.png',
+    image: './images/attendees/fredde-choble-soft.png',
   },
   {
     name: 'Payye',
@@ -70,7 +77,7 @@ export const attendees: Attendee[] = [
     description:
       'Presentation och en högst tvivelaktig meritlista kommer snart.',
     initials: 'PA',
-    image: './images/attendees/payye.png',
+    image: './images/attendees/payye-soft.png',
   },
   {
     name: 'Fille',
@@ -79,16 +86,16 @@ export const attendees: Attendee[] = [
     description:
       'Presentation och en högst tvivelaktig meritlista kommer snart.',
     initials: 'FI',
-    image: './images/attendees/fille.png',
+    image: './images/attendees/fille-soft.png',
   },
   {
     name: 'Hagge',
     nickname: 'Malung 2026',
-    role: 'Profil på väg',
+    role: 'Kock',
     description:
       'Presentation och en högst tvivelaktig meritlista kommer snart.',
     initials: 'HA',
-    image: './images/attendees/hagge.png',
+    image: './images/attendees/hagge-soft.png',
   },
   {
     name: 'Yavve',
@@ -97,7 +104,7 @@ export const attendees: Attendee[] = [
     description:
       'Presentation och en högst tvivelaktig meritlista kommer snart.',
     initials: 'YA',
-    image: './images/attendees/yavve.png',
+    image: './images/attendees/yavve-soft.png',
   },
 ]
 
