@@ -113,7 +113,7 @@ export const tripYears = [
   { year: '2025', note: 'Bilder kommer när arkivet öppnas', status: 'Arkiv' },
   {
     year: '2024',
-    note: '29 bilder och 29 filmer från resan',
+    note: '28 bilder och 28 filmer från resan',
     status: 'Öppet',
     href: './archive-2024.html',
   },
