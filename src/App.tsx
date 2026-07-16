@@ -1,19 +1,29 @@
-import { useEffect, useRef, useState, type MouseEvent } from 'react'
-import { motion } from 'motion/react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
+} from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import {
   ArrowLeft,
   ArrowRight,
   Beer,
+  ChevronLeft,
+  ChevronRight,
   Fish,
   Flame,
   MapPin,
   Menu as MenuIcon,
   Mountain,
+  Play,
   Trees,
   Volume2,
   VolumeX,
   X,
 } from 'lucide-react'
+import { archive2024Media } from './archive2024'
 import { activities, attendees, menu, tripYears } from './data'
 
 const tripDate = new Date('2026-07-30T12:00:00+02:00')
@@ -23,6 +33,9 @@ const audioVolumeStorageKey = 'malung-audio-volume'
 const audioTimeStorageKey = 'malung-audio-time'
 const smoothEase = [0.22, 1, 0.36, 1] as const
 const revealViewport = { once: true, amount: 0.15 } as const
+const archiveAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`
+
+type SitePage = 'home' | 'attendees' | 'archive'
 
 type Countdown = {
   days: number
@@ -109,7 +122,7 @@ function Brand() {
   )
 }
 
-function Header({ attendeesPage = false }: { attendeesPage?: boolean }) {
+function Header({ page = 'home' }: { page?: SitePage }) {
   const [isOpen, setIsOpen] = useState(false)
 
   const closeMenu = () => setIsOpen(false)
@@ -133,7 +146,7 @@ function Header({ attendeesPage = false }: { attendeesPage?: boolean }) {
           {isOpen ? <X /> : <MenuIcon />}
         </button>
         <nav className={isOpen ? 'main-nav is-open' : 'main-nav'}>
-          {attendeesPage ? (
+          {page !== 'home' ? (
             <>
               <a
                 href="./"
@@ -163,7 +176,17 @@ function Header({ attendeesPage = false }: { attendeesPage?: boolean }) {
                 Meny
               </a>
               <a
-                className="nav-cta is-current"
+                className={page === 'archive' ? 'is-current-link' : undefined}
+                href="./#arkiv"
+                onClick={(event) => {
+                  closeMenu()
+                  navigateWithinSite(event, './#arkiv')
+                }}
+              >
+                Researkiv
+              </a>
+              <a
+                className={`nav-cta${page === 'attendees' ? ' is-current' : ''}`}
                 href="./attendees.html"
                 onClick={(event) => {
                   closeMenu()
@@ -453,27 +476,47 @@ function HomePage() {
             </div>
           </div>
           <div className="year-list">
-            {tripYears.map((trip, index) => (
-              <motion.button
-                className="year-row"
-                type="button"
-                key={trip.year}
-                initial={{ opacity: 0, x: -16 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.45 }}
-                transition={{ delay: index * 0.07, ease: smoothEase }}
-                whileHover={{ x: 6 }}
-                whileTap={{ scale: 0.995 }}
-              >
-                <span className="year-status">{trip.status}</span>
-                <strong>{trip.year}</strong>
-                <span>{trip.note}</span>
-                <ArrowRight />
-              </motion.button>
-            ))}
+            {tripYears.map((trip, index) => {
+              const content = (
+                <>
+                  <span className="year-status">{trip.status}</span>
+                  <strong>{trip.year}</strong>
+                  <span>{trip.note}</span>
+                  <ArrowRight />
+                </>
+              )
+
+              return trip.href ? (
+                <motion.a
+                  className="year-row is-available"
+                  href={trip.href}
+                  key={trip.year}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.45 }}
+                  transition={{ delay: index * 0.07, ease: smoothEase }}
+                  whileHover={{ x: 6 }}
+                  whileTap={{ scale: 0.995 }}
+                  onClick={(event) => navigateWithinSite(event, trip.href)}
+                >
+                  {content}
+                </motion.a>
+              ) : (
+                <motion.div
+                  className="year-row is-locked"
+                  key={trip.year}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.45 }}
+                  transition={{ delay: index * 0.07, ease: smoothEase }}
+                >
+                  {content}
+                </motion.div>
+              )
+            })}
           </div>
           <p className="archive-note">
-            Fotoarkivet fylls på när bilderna är redo.
+            Arkivet fylls på år för år. 2024 är nu öppet.
           </p>
         </motion.section>
 
@@ -509,10 +552,324 @@ function HomePage() {
   )
 }
 
+function formatDuration(duration = 0) {
+  const minutes = Math.floor(duration / 60)
+  const seconds = Math.round(duration % 60)
+
+  return `${minutes}:${String(seconds).padStart(2, '0')}`
+}
+
+function MediaViewer({
+  activeIndex,
+  onChange,
+  onClose,
+}: {
+  activeIndex: number
+  onChange: (index: number) => void
+  onClose: () => void
+}) {
+  const activeItem = archive2024Media[activeIndex]
+  const pointerStartX = useRef<number | null>(null)
+  const pausedBackgroundAudio = useRef<HTMLAudioElement | null>(null)
+  const galleryScrollPosition = useRef(window.scrollY)
+
+  const showPrevious = () => {
+    onChange(
+      (activeIndex - 1 + archive2024Media.length) % archive2024Media.length,
+    )
+  }
+
+  const showNext = () => {
+    onChange((activeIndex + 1) % archive2024Media.length)
+  }
+
+  const resumeBackgroundAudio = () => {
+    const audio = pausedBackgroundAudio.current
+
+    if (!audio) {
+      return
+    }
+
+    pausedBackgroundAudio.current = null
+    void audio.play().catch(() => {
+      // Playback can still be subject to the browser's autoplay policy.
+    })
+  }
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    const scrollPosition = galleryScrollPosition.current
+    document.body.style.overflow = 'hidden'
+    window.scrollTo({ top: 0 })
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.scrollTo({ top: scrollPosition })
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+
+      if (event.key === 'ArrowLeft') {
+        showPrevious()
+      }
+
+      if (event.key === 'ArrowRight') {
+        showNext()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  })
+
+  useEffect(() => {
+    const backgroundAudio = document.querySelector<HTMLAudioElement>(
+      'audio[data-background-audio]',
+    )
+
+    if (activeItem.type === 'video') {
+      if (
+        backgroundAudio
+        && !backgroundAudio.paused
+        && !pausedBackgroundAudio.current
+      ) {
+        pausedBackgroundAudio.current = backgroundAudio
+        backgroundAudio.pause()
+      }
+      return
+    }
+
+    resumeBackgroundAudio()
+  }, [activeItem.type])
+
+  useEffect(() => () => resumeBackgroundAudio(), [])
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (
+      event.target instanceof Element
+      && event.target.closest('video, button')
+    ) {
+      return
+    }
+
+    pointerStartX.current = event.clientX
+  }
+
+  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (pointerStartX.current === null) {
+      return
+    }
+
+    const distance = event.clientX - pointerStartX.current
+    pointerStartX.current = null
+
+    if (Math.abs(distance) < 48) {
+      return
+    }
+
+    if (distance > 0) {
+      showPrevious()
+      return
+    }
+
+    showNext()
+  }
+
+  return (
+    <motion.div
+      className="media-viewer"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Arkivobjekt ${activeIndex + 1} av ${archive2024Media.length}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22 }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose()
+        }
+      }}
+    >
+      <div className="viewer-topbar">
+        <p>
+          <span>{activeItem.type === 'video' ? 'Film' : 'Bild'}</span>
+          {String(activeIndex + 1).padStart(2, '0')} / {archive2024Media.length}
+        </p>
+        <button type="button" onClick={onClose} aria-label="Stäng visning">
+          <X />
+        </button>
+      </div>
+
+      <button
+        className="viewer-arrow viewer-previous"
+        type="button"
+        onClick={showPrevious}
+        aria-label="Föregående"
+      >
+        <ChevronLeft />
+      </button>
+
+      <div
+        className="viewer-stage"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {activeItem.type === 'image' ? (
+            <motion.img
+              key={activeItem.src}
+              src={archiveAsset(activeItem.src)}
+              alt={`Malung 2024, bild ${activeIndex + 1}`}
+              initial={{ opacity: 0, scale: 0.985 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.985 }}
+              transition={{ duration: 0.2, ease: smoothEase }}
+            />
+          ) : (
+            <motion.video
+              key={activeItem.src}
+              src={archiveAsset(activeItem.src)}
+              poster={archiveAsset(activeItem.thumbnail)}
+              controls
+              autoPlay
+              playsInline
+              initial={{ opacity: 0, scale: 0.985 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.985 }}
+              transition={{ duration: 0.2, ease: smoothEase }}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+
+      <button
+        className="viewer-arrow viewer-next"
+        type="button"
+        onClick={showNext}
+        aria-label="Nästa"
+      >
+        <ChevronRight />
+      </button>
+
+      <p className="viewer-hint">
+        Använd pilarna, svep eller tryck ← →
+      </p>
+    </motion.div>
+  )
+}
+
+function Archive2024Page() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const imageCount = archive2024Media.filter(
+    (item) => item.type === 'image',
+  ).length
+  const videoCount = archive2024Media.length - imageCount
+
+  return (
+    <>
+      <Header page="archive" />
+      <main className="archive-page">
+        <motion.section
+          className="archive-year-intro"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: smoothEase }}
+        >
+          <a
+            className="back-link archive-back-link"
+            href="./#arkiv"
+            onClick={(event) => navigateWithinSite(event, './#arkiv')}
+          >
+            <ArrowLeft size={17} /> Tillbaka till researkivet
+          </a>
+          <div className="archive-year-heading">
+            <div>
+              <p className="overline">Bevismaterial / Malung</p>
+              <h1>2024</h1>
+            </div>
+            <div className="archive-year-copy">
+              <p>
+                Fiske, eld, märkliga tävlingar och material som borde ha
+                stannat i kamerarullen.
+              </p>
+              <dl>
+                <div>
+                  <dt>Bilder</dt>
+                  <dd>{imageCount}</dd>
+                </div>
+                <div>
+                  <dt>Filmer</dt>
+                  <dd>{videoCount}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </motion.section>
+
+        <section className="archive-gallery" aria-label="Malung 2024 galleri">
+          {archive2024Media.map((item, index) => (
+            <motion.button
+              className="gallery-item"
+              type="button"
+              key={`${item.src}-${index}`}
+              aria-label={`Öppna ${item.type === 'video' ? 'film' : 'bild'} ${index + 1} av ${archive2024Media.length}`}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.12 }}
+              transition={{ duration: 0.45, ease: smoothEase }}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.99 }}
+              onClick={() => setActiveIndex(index)}
+            >
+              <img
+                src={archiveAsset(item.thumbnail)}
+                alt=""
+                width={item.width}
+                height={item.height}
+                loading={index < 6 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+              <span className="gallery-index">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              {item.type === 'video' && (
+                <span className="gallery-video-badge">
+                  <Play size={15} fill="currentColor" />
+                  {formatDuration(item.duration)}
+                </span>
+              )}
+            </motion.button>
+          ))}
+        </section>
+      </main>
+
+      <AnimatePresence>
+        {activeIndex !== null && (
+          <MediaViewer
+            activeIndex={activeIndex}
+            onChange={setActiveIndex}
+            onClose={() => setActiveIndex(null)}
+          />
+        )}
+      </AnimatePresence>
+      <Footer />
+    </>
+  )
+}
+
 function AttendeesPage() {
   return (
     <>
-      <Header attendeesPage />
+      <Header page="attendees" />
       <main className="attendees-page">
         <motion.div
           className="attendees-topbar"
@@ -715,6 +1072,7 @@ function BackgroundAudio() {
     <>
       <audio
         ref={audioRef}
+        data-background-audio
         src={backgroundTrack}
         autoPlay
         loop
@@ -764,6 +1122,9 @@ export function App() {
     () => `${window.location.pathname}${window.location.search}${window.location.hash}`,
   )
   const isAttendeesPage = window.location.pathname.endsWith('attendees.html')
+  const isArchive2024Page = window.location.pathname.endsWith(
+    'archive-2024.html',
+  )
 
   useEffect(() => {
     const updateRoute = () => {
@@ -779,7 +1140,9 @@ export function App() {
   useEffect(() => {
     document.title = isAttendeesPage
       ? 'Gänget — Malung'
-      : 'Malung — sedan någon gång'
+      : isArchive2024Page
+        ? 'Malung 2024 — Researkiv'
+        : 'Malung — sedan någon gång'
 
     window.requestAnimationFrame(() => {
       if (window.location.hash) {
@@ -791,11 +1154,15 @@ export function App() {
 
       window.scrollTo({ top: 0 })
     })
-  }, [route, isAttendeesPage])
+  }, [route, isArchive2024Page, isAttendeesPage])
 
   return (
     <>
-      {isAttendeesPage ? <AttendeesPage /> : <HomePage />}
+      {isAttendeesPage
+        ? <AttendeesPage />
+        : isArchive2024Page
+          ? <Archive2024Page />
+          : <HomePage />}
       <BackgroundAudio />
     </>
   )

@@ -111,5 +111,10 @@ export const attendees: Attendee[] = [
 export const tripYears = [
   { year: '2026', note: 'Nästa kapitel börjar 30 juli', status: 'Snart' },
   { year: '2025', note: 'Bilder kommer när arkivet öppnas', status: 'Arkiv' },
-  { year: '2024', note: 'Bilder kommer när arkivet öppnas', status: 'Arkiv' },
+  {
+    year: '2024',
+    note: '29 bilder och 29 filmer från resan',
+    status: 'Öppet',
+    href: './archive-2024.html',
+  },
 ]
